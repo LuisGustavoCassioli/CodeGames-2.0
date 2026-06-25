@@ -18,9 +18,10 @@ class Database {
                 if ($dbUrl) {
                     // Example: postgres://user:pass@host:port/dbname
                     $dbopts = parse_url($dbUrl);
-                    $dsn = "pgsql:host={$dbopts["host"]};port={$dbopts["port"]};dbname=" . ltrim($dbopts["path"], '/');
-                    $user = $dbopts["user"];
-                    $pass = $dbopts["pass"];
+                    $port = $dbopts["port"] ?? 5432;
+                    $dsn = "pgsql:host={$dbopts["host"]};port={$port};dbname=" . ltrim($dbopts["path"], '/');
+                    $user = $dbopts["user"] ?? null;
+                    $pass = $dbopts["pass"] ?? null;
 
                     self::$instance = new PDO($dsn, $user, $pass, [
                         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
