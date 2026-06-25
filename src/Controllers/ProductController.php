@@ -17,6 +17,11 @@ class ProductController {
         view('catalog/home', ['products' => $products, 'search' => $search]);
     }
 
+    public function catalog() {
+        $products = $this->productModel->findAll();
+        view('catalog/catalog', ['products' => $products]);
+    }
+
     public function show(string $slug) {
         if (empty($slug)) {
             header('Location: /');

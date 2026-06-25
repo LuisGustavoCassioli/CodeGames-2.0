@@ -1,57 +1,17 @@
-<!-- views/catalog/home.php -->
+<!-- views/catalog/catalog.php -->
 
 <div class="container mx-auto px-4 max-w-7xl py-8">
-    <?php if (empty($search)): ?>
-    <!-- Hero Section -->
-    <section class="relative rounded-3xl overflow-hidden mb-12 border border-white/5 shadow-2xl group">
-        <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-[#0a0a0a]/80 to-transparent z-10"></div>
-        <!-- Replace with a dynamic top game image if available -->
-        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop" alt="Featured Game" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-        
-        <div class="relative z-20 p-8 md:p-16 max-w-2xl">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/20 text-brand-400 text-xs font-bold tracking-wider mb-4 border border-brand-500/30">
-                <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span>
-                DESTAQUE DA SEMANA
-            </span>
-            <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 leading-tight tracking-tight">
-                Cyberpunk <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">2077</span>
-            </h1>
-            <p class="text-gray-300 text-lg md:text-xl mb-8 leading-relaxed">
-                Bem-vindo a Night City, a megalópole obcecada por poder, glamour e modificações corporais.
-            </p>
-            <div class="flex items-center gap-4">
-                <a href="#" class="px-8 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    Comprar Agora
-                </a>
-                <div class="flex flex-col">
-                    <span class="text-gray-400 text-sm line-through">R$ 199,90</span>
-                    <span class="text-2xl font-bold text-white">R$ 99,90</span>
-                </div>
-            </div>
-        </div>
-    </section>
-    <?php endif; ?>
-
     <!-- Main Content -->
     <div class="space-y-12 pb-12">
-
-        <!-- Section: Lançamentos / Mais Vendidos -->
         <section>
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-bold text-white flex items-center gap-2">
                     <svg class="w-6 h-6 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    <?= !empty($search) ? 'Resultados para: <span class="text-brand-400">"' . htmlspecialchars($search) . '"</span>' : 'Mais Vendidos' ?>
+                    Catálogo Completo
                 </h2>
-                <?php if (empty($search)): ?>
-                <a href="/catalog" class="text-sm font-medium text-brand-400 hover:text-brand-300 transition-colors flex items-center gap-1">
-                    Ver todos <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </a>
-                <?php else: ?>
                 <a href="/" class="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-1">
-                    Limpar Busca
+                    Voltar
                 </a>
-                <?php endif; ?>
             </div>
 
             <?php if (empty($products)): ?>
@@ -60,8 +20,7 @@
                 </div>
             <?php else: ?>
                 <div class="relative group">
-                    <!-- Horizontally Scrollable Container (or Grid if searching) -->
-                    <div class="flex <?= !empty($search) ? 'flex-wrap' : 'overflow-x-auto snap-x snap-mandatory' ?> gap-4 pb-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-4">
                         
                         <?php foreach ($products as $product): ?>
                             <?php 
@@ -71,7 +30,7 @@
                                     $discount = round((($product['original_price'] - $product['price']) / $product['original_price']) * 100);
                                 }
                             ?>
-                            <div class="flex-none w-[200px] sm:w-[240px] snap-start">
+                            <div class="flex-none">
                                 <div class="bg-[#121212] border border-white/5 rounded-2xl overflow-hidden hover:-translate-y-1.5 hover:shadow-[0_10px_20px_-3px_rgba(0,0,0,0.5),_0_0_15px_rgba(59,130,246,0.3)] hover:border-brand-500/40 transition-all duration-300 group/card h-full flex flex-col relative">
                                     
                                     <!-- Tags -->
@@ -98,7 +57,6 @@
                                                 Sem Imagem
                                             </div>
                                         <?php endif; ?>
-                                        <!-- Overlay hover gradient -->
                                         <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
                                     </a>
 
@@ -128,10 +86,6 @@
                                 </div>
                             </div>
                         <?php endforeach; ?>
-                        <?php if (empty($search)): ?>
-                        <!-- Spacer para evitar que o último card fique grudado na borda direita -->
-                        <div class="flex-none w-4 sm:w-8"></div>
-                        <?php endif; ?>
                     </div>
                 </div>
             <?php endif; ?>

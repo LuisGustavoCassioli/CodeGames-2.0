@@ -16,10 +16,26 @@ if (!$games) {
     die("Erro ao ler JSON: " . json_last_error_msg() . "\n");
 }
 
+require __DIR__ . '/../src/Config/Database.php';
+
+use App\Config\Database;
+
+if (file_exists(__DIR__ . '/../.env')) {
+    $lines = file(__DIR__ . '/../.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        list($name, $value) = explode('=', $line, 2);
+        $name = trim($name);
+        $value = trim($value, "\"'");
+        putenv(sprintf('%s=%s', $name, $value));
+        $_ENV[$name] = $value;
+        $_SERVER[$name] = $value;
+    }
+}
+
 try {
-    $pdo = new PDO('sqlite:' . $dbPath);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
+    $pdo = Database::getConnection();
+} catch (Exception $e) {
     die("Erro BD: " . $e->getMessage() . "\n");
 }
 
@@ -34,48 +50,55 @@ $stmt = $pdo->prepare("
 
 $count = 0;
 foreach ($games as $game) {
-    $id = $game['id'];
     $title = $game['nome'];
-    // basic slugify
     $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
     $description = $game['sinopse'] ?? '';
     
-    // Parse price
     $valorRaw = $game['valor'] ?? '';
     $price = 0.00;
     if (strpos(strtolower($valorRaw), 'gratuito') !== false) {
         $price = 0.00;
     } else {
-        // Remove "R$ ", replace "," with "."
-        $clean = str_replace(['R$', ' ', '.'], '', $valorRaw); // remove R$, spaces, and thousand dots
+        $clean = str_replace(['R$', ' ', '.'], '', $valorRaw); 
         $clean = str_replace(',', '.', $clean);
         $price = (float) $clean;
     }
     
     $image_url = $game['imagem'] ?? '';
-    // Fix relative assets if necessary
     if (strpos($image_url, 'ASSETS/') === 0) {
         $image_url = '/' . $image_url;
     }
     
     $stock = 100;
-    $platform = 'Digital'; // Default
+    $platform = 'Digital';
 
     try {
-        $stmt->execute([
-            ':id' => $id + 1000, // Offset IDs to avoid conflict with seeded games
-            ':title' => $title,
-            ':slug' => $slug,
-            ':description' => $description,
-            ':price' => $price,
-            ':image_url' => $image_url,
-            ':stock' => $stock,
-            ':platform' => $platform
-        ]);
+        // Check if exists by slug
+        $stmtCheck = $pdo->prepare("SELECT id FROM products WHERE slug = ?");
+        $stmtCheck->execute([$slug]);
+        $existing = $stmtCheck->fetch();
+
+        if ($existing) {
+            // Update
+            $stmtUpdate = $pdo->prepare("
+                UPDATE products 
+                SET title = ?, price = ?, image_url = ?, updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            ");
+            $stmtUpdate->execute([$title, $price, $image_url, $existing['id']]);
+        } else {
+            // Insert
+            $id = Database::generateUuid();
+            $stmtInsert = $pdo->prepare("
+                INSERT INTO products (id, title, slug, description, price, image_url, stock, platform, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            ");
+            $stmtInsert->execute([$id, $title, $slug, $description, $price, $image_url, $stock, $platform]);
+        }
         $count++;
     } catch (PDOException $e) {
         echo "Erro inserindo $title: " . $e->getMessage() . "\n";
     }
 }
 
-echo "Migração concluída! $count jogos importados para o CodeGames 2.0!\n";
+echo "Migração concluída! $count jogos processados para o CodeGames 2.0!\n";

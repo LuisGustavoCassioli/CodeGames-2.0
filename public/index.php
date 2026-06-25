@@ -47,6 +47,10 @@ switch ($requestUri) {
         (new App\Controllers\ProductController())->show($_GET['slug'] ?? '');
         break;
 
+    case '/catalog':
+        (new App\Controllers\ProductController())->catalog();
+        break;
+
     case '/login':
         if ($method === 'POST') {
             (new App\Controllers\AuthController())->processLogin();
