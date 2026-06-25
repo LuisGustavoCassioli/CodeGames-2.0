@@ -28,3 +28,18 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# ─── Database & Scratch files ──────────────────────────────────────────
+database.sqlite
+database.sqlite-journal
+*.sqlite3
+*.db
+check_neon.php
+check_db.php
+check_sqlite.php
+create_sqlite_db.php
+seed.php
+test.php
+alter_db.php
+scripts/test_coupons.php
+scripts/import_old_games.php
