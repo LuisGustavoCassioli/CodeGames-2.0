@@ -1,0 +1,30 @@
+# ─── Dependências ──────────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+
+# ─── Build ─────────────────────────────────────────────────────────────
+dist/
+build/
+.next/
+out/
+
+# ─── Variáveis de ambiente ─────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ─── Prisma ────────────────────────────────────────────────────────────
+# O schema e as migrations são versionados — só o client gerado é ignorado
+apps/api/src/generated/
+
+# ─── Logs e temporários ────────────────────────────────────────────────
+*.log
+npm-debug.log*
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+
+# ─── IDE ───────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
